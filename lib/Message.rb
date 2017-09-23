@@ -5,6 +5,7 @@ require 'message_test'
 
 class Message
 
+ MAX_RETRIES = 3
  attr_accessor :g, :qu, :max_queue_size
 
  class Graph
@@ -81,7 +82,12 @@ class Message
     end
     while !@g.stack.empty?
      consumer_obj = @g.stack.pop()
-     consumer_obj.consume(msg)
+     status = consumer_obj.consume(msg)
+     count = 1
+     while count < MAX_RETRIES && status == false
+      status = consumer_obj.consume(msg)
+      count+=1
+     end
     end
    end
   end

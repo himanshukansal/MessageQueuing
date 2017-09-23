@@ -18,9 +18,15 @@ class Consumer
  end
 
  def consume(msg)
-  unless msg.scan(Regexp.new(@exp)).empty?
-   puts "Consumer #{@id} consumes #{msg}"
+  status = true
+  begin
+   unless msg.scan(Regexp.new(@exp)).empty?
+    puts "Consumer #{@id} consumes #{msg}"
+   end
+  rescue Exception => e
+   status = false
   end
+  status
  end
 
 end
