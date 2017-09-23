@@ -15,8 +15,8 @@ class MessageTest
   m.g.add(obj2, obj)
   m.g.add(obj3, obj)
 
-  #start_producer takes one argument i.e. file path from which producer will read
-  m.start_producer('/Users/himanshu/Desktop/test.txt')
+  #start_producer takes two argument i.e. file path from which producer will read and maximum queue size
+  m.start_producer('/Users/himanshu/Desktop/test.txt', 100)
 
   #Starts Consumers
   m.consume_message

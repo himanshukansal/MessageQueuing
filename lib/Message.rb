@@ -5,7 +5,7 @@ require 'message_test'
 
 class Message
 
- attr_accessor :g, :qu
+ attr_accessor :g, :qu, :max_queue_size
 
  class Graph
   attr_reader :nodes
@@ -30,6 +30,7 @@ class Message
  def initialize
   @g = Graph.new()
   @qu = Queue.new
+  @max_queue_size = 100
  end
 
  def register_consumer(consumer, dependencies)
@@ -37,7 +38,8 @@ class Message
   g.add(consumer)
  end
 
- def start_producer(file_path)
+ def start_producer(file_path, size=100)
+  @max_queue_size = size
   Thread.start { produce(file_path) }
  end
 
@@ -45,7 +47,11 @@ class Message
   FileWatcher.new([file_path]).watch() do |filename, event|
    if(event == :changed)
     msg = IO.readlines(file_path).last
-    @qu.push(msg)
+    if @qu.size < @max_queue_size
+     @qu.push(msg)
+    else
+     puts 'Queue is full'
+    end
    end
   end
  end
