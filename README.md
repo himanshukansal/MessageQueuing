@@ -12,6 +12,7 @@ Mac OSX:
 
 And then execute (in root directory of repository):
 
+    $ gem install filewatcher
     $ gem build Message.gemspec
     $ gem install Message-1.0.gem
 
