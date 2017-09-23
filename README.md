@@ -10,7 +10,7 @@ Mac OSX:
 
 `$ brew install ruby`
 
-And then execute:
+And then execute (in root directory of repository):
 
     $ gem build Message.gemspec
     $ gem install Message-1.0.gem
