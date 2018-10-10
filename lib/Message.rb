@@ -45,8 +45,8 @@ class Message
  end
 
  def produce(file_path)
-  FileWatcher.new([file_path]).watch() do |filename, event|
-   if(event == :changed)
+  Filewatcher.new([file_path]).watch() do |filename, event|
+    if(event == :updated)
     msg = IO.readlines(file_path).last
     if @qu.size < @max_queue_size
      @qu.push(msg)
