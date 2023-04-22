@@ -4,9 +4,9 @@ class MessageTest
 
  def start
   # Consumer constructor takes two parameter - Unique Consumer Id, Regexp for messages to be consumed
-  obj = Consumer.new(1, '.*')
-  obj2 = Consumer.new(2, '.*')
-  obj3 = Consumer.new(3, '.*')
+  obj = Consumer.new(1, '^a')
+  obj2 = Consumer.new(2, '^b')
+  obj3 = Consumer.new(3, '^c')
 
   m = Message.new
 
