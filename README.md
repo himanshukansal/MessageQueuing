@@ -12,16 +12,16 @@ Mac OSX:
 
 And then execute (in root directory of repository):
 
-    $ gem install filewatcher
-    $ gem build Message.gemspec
-    $ gem install Message-1.0.gem
+    gem install filewatcher
+    gem build Message.gemspec
+    gem install Message-1.0.gem
 
 
 ## Run
 
 Launch Ruby Interpreter:
  
- `$ irb`
+ `irb`
  
 And execute:
 
@@ -38,9 +38,9 @@ And execute:
 
 **Reinstall Gem**
 
-    $ gem uninstall Message-1.0.gem
-    $ gem build Message.gemspec
-    $ gem install Message-1.0.gem
+    gem uninstall Message-1.0.gem
+    gem build Message.gemspec
+    gem install Message-1.0.gem
     
 **Run Again**
 
