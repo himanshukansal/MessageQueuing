@@ -2,6 +2,7 @@ require 'consumer'
 require 'util'
 require 'filewatcher'
 require 'message_test'
+require 'thread'
 
 class Message
 
@@ -13,7 +14,7 @@ class Message
   attr_accessor :visited, :stack
 
   def initialize
-   @nodes = Array.new()
+   @nodes = Array.new
    @visited = []
    @stack = []
   end
@@ -29,9 +30,11 @@ class Message
  end
 
  def initialize
-  @g = Graph.new()
+  @g = Graph.new
   @qu = Queue.new
   @max_queue_size = 100
+  @mutex = Mutex.new
+  @condition = ConditionVariable.new
  end
 
  def register_consumer(consumer, dependencies)
@@ -45,18 +48,26 @@ class Message
  end
 
  def produce(file_path)
-  Filewatcher.new([file_path]).watch() do |filename, event|
-    if(event == :updated)
-    msg = IO.readlines(file_path).last
-    if @qu.size < @max_queue_size
-     @qu.push(msg)
-    else
-     puts 'Queue is full'
+  Filewatcher.new([file_path]).watch do |file_event|
+    file_event.each do |filename, event|
+      if(event == :updated)
+        msgs = IO.readlines(file_path)
+        msgs.each do |msg|
+          @mutex.synchronize do
+            while @qu.size >= @max_queue_size
+              puts 'Queue is full, waiting...'
+              @condition.wait(@mutex)
+            end
+
+            @qu.push(msg)
+            puts "Message added to queue: #{msg.chomp}"
+            @condition.signal
+          end
+        end
+      end
     end
-   end
   end
  end
-
 
  def consume_message_util(v)
   @g.visited[v.id] = true
@@ -72,8 +83,17 @@ class Message
 
  def consume_message
   while(true)
-   unless @qu.empty?
+    @mutex.synchronize do
+     while @qu.empty?
+       puts "Queue is empty, waiting..."
+       @condition.wait(@mutex)
+     end
+    end
+
     msg = @qu.shift
+    puts "Message dequeued: #{msg.chomp}"
+    @condition.signal
+
     @g.visited = []
     @g.nodes.each do |arr|
      unless Util.empty(arr) || Util.empty(arr[0]) || @g.visited[arr[0][0].id]
@@ -89,7 +109,6 @@ class Message
       count+=1
      end
     end
-   end
   end
  end
 

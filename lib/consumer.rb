@@ -22,6 +22,7 @@ class Consumer
   begin
    unless msg.scan(Regexp.new(@exp)).empty?
     puts "Consumer #{@id} consumes #{msg}"
+    sleep(1)
    end
   rescue Exception => e
    status = false
